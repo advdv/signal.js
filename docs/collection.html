@@ -1,0 +1,138 @@
+<!DOCTYPE html><html lang="en"><head><title>collection</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="collection"><meta name="groc-project-path" content="src/collection.js"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="meta"><div class="file-path">src/collection.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">Collection</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">Collection</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">routes</span> <span class="o">=</span> <span class="p">{};</span>
+
+  <span class="kd">var</span> <span class="nx">normalizePath</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">path</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s2">&quot;[/ ]+$&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">);</span> <span class="c1">//end</span>
+    <span class="nx">path</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s2">&quot;^[/ ]+&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">);</span> <span class="c1">//beginning</span>
+    <span class="k">return</span> <span class="nx">path</span><span class="p">;</span>
+  <span class="p">};</span></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'>Method build()</span></p>
+
+<p>Build the collection using hte profided configuration has</p>
+
+<p>Parameters:</p>
+
+<ul>
+<li><strong>conf must be an object.</strong><br/>(the configuration)</li>
+</ul>
+
+<p><strong>Returns a Collection</strong><br/>(itself)</p></div></div><div class="code"><div class="wrapper">  <span class="nx">self</span><span class="p">.</span><span class="nx">build</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">build</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">conf</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">conf</span><span class="p">[</span><span class="nx">name</span><span class="p">]);</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="nx">self</span><span class="p">;</span>
+  <span class="p">};</span></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'>Method addCollection()</span></p>
+
+<p>Adds a route collection at the end of the current set by appending all
+routes of the added collection.</p>
+
+<p>Parameters:</p>
+
+<ul>
+<li><strong>coll must be a Collection.</strong><br/>(the other collection)</li>
+</ul>
+
+<p><strong>Returns a Collection</strong><br/>(itself)</p></div></div><div class="code"><div class="wrapper">  <span class="nx">self</span><span class="p">.</span><span class="nx">addCollection</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">addCollection</span><span class="p">(</span><span class="nx">coll</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="c1">//remove identical first so they get added to the end</span>
+    <span class="kd">var</span> <span class="nx">insert</span> <span class="o">=</span> <span class="nx">coll</span><span class="p">.</span><span class="nx">all</span><span class="p">();</span>
+    <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">insert</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+      <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">name</span><span class="p">))</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+
+      <span class="nx">self</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">insert</span><span class="p">[</span><span class="nx">name</span><span class="p">]);</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="nx">self</span><span class="p">;</span>
+  <span class="p">};</span></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'></span></p>
+
+<p>Add an prefix to all routes in the collection</p>
+
+<p>Parameters:</p>
+
+<ul>
+<li><strong>prefix must be a string.</strong><br/>(the string to prefix with)</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="nx">self</span><span class="p">.</span><span class="nx">addPrefix</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">addPrefix</span><span class="p">(</span><span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="c1">//remove slashes and spaces</span>
+    <span class="nx">prefix</span> <span class="o">=</span> <span class="nx">normalizePath</span><span class="p">(</span><span class="nx">prefix</span><span class="p">);</span>
+
+    <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">routes</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+      <span class="nx">routes</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="nx">prefix</span><span class="o">+</span><span class="nx">routes</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">path</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="nx">self</span><span class="p">;</span>
+  <span class="p">};</span></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'>Method add()</span></p>
+
+<p>Add a route to the collection</p>
+
+<p>Parameters:</p>
+
+<ul>
+<li><p><strong>name must be a string.</strong><br/>(the route name)</p></li>
+<li><p><strong>route must be a Route.</strong><br/>(the route conf)</p></li>
+</ul>
+
+<p><strong>Returns a Collection</strong><br/>(itself)</p></div></div><div class="code"><div class="wrapper">  <span class="nx">self</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">add</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">route</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="nx">route</span><span class="p">.</span><span class="nx">path</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;given route &quot;&#39;</span><span class="o">+</span><span class="nx">name</span><span class="o">+</span><span class="s1">&#39;&quot; did not specify a path, received:&#39;</span> <span class="o">+</span> <span class="nx">route</span><span class="p">);</span>
+
+    <span class="nx">route</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">normalizePath</span><span class="p">(</span><span class="nx">route</span><span class="p">.</span><span class="nx">path</span><span class="p">);</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="nx">route</span><span class="p">.</span><span class="nx">defaults</span> <span class="o">!==</span> <span class="kc">undefined</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">route</span><span class="p">.</span><span class="nx">defaults</span> <span class="o">!==</span> <span class="s1">&#39;object&#39;</span> <span class="p">)</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;given route &quot;&#39;</span><span class="o">+</span><span class="nx">name</span><span class="o">+</span><span class="s1">&#39;&quot; expected an object to specify defaults, received:&#39;</span> <span class="o">+</span> <span class="nx">route</span><span class="p">.</span><span class="nx">defaults</span><span class="p">);</span>
+
+    <span class="nx">routes</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">route</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">self</span><span class="p">;</span>
+  <span class="p">};</span></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'>Method remove()</span></p>
+
+<p>Remove a route from the collection</p>
+
+<p>Parameters:</p>
+
+<ul>
+<li><strong>name must be a string.</strong><br/>(the route name)</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="nx">self</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">remove</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">delete</span> <span class="nx">routes</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+  <span class="p">};</span></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'>Method get()</span></p>
+
+<p>Get a route from the collection by name</p>
+
+<p>Parameters:</p>
+
+<ul>
+<li><strong>name must be a string.</strong><br/>(the route name)</li>
+</ul>
+
+<p><strong>Returns a Route</strong><br/>(the specific route or undefined if it doesnt exist)</p></div></div><div class="code"><div class="wrapper">  <span class="nx">self</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">get</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">routes</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+  <span class="p">};</span></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'>Method has()</span></p>
+
+<p>Does the collection has the specifc route</p>
+
+<p>Parameters:</p>
+
+<ul>
+<li><strong>name must be a string.</strong><br/>(the name)</li>
+</ul>
+
+<p><strong>Returns a Boolean</strong><br/>(wether it exists)</p></div></div><div class="code"><div class="wrapper">  <span class="nx">self</span><span class="p">.</span><span class="nx">has</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">has</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+    <span class="k">return</span> <span class="p">((</span><span class="nx">res</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">);</span>
+  <span class="p">};</span></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'>Method all()</span></p>
+
+<p>Return all routes in the collection</p>
+
+<p><strong>Returns an Object</strong><br/>(the route collection has)</p></div></div><div class="code"><div class="wrapper">  <span class="nx">self</span><span class="p">.</span><span class="nx">all</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">all</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">routes</span><span class="p">;</span>
+  <span class="p">};</span>
+
+  <span class="c1">//construction</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">conf</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">build</span><span class="p">(</span><span class="nx">conf</span><span class="p">);</span>
+
+<span class="p">};</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">Collection</span><span class="p">;</span></div></div></div></div></body></html>

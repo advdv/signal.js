@@ -1,0 +1,11 @@
+{
+	"invalid1": {
+
+	},
+	"invalid2": {
+		"path": "/invalid-default",
+		"defaults": "a"
+
+	}
+
+}

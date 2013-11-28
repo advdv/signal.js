@@ -1,0 +1,12 @@
+{
+	"index": {
+		"path": " users "
+	},
+	"one": {
+		"path": "/users/{id}"
+	},
+	"profile": {
+		"path": "/users/{id}",
+		"defaults": {"_controller": "profile"}
+	}
+}

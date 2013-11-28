@@ -1,0 +1,39 @@
+{
+	"basic": {
+		"path": "/basic/{type}/id-{id}.{_format}test",
+		"requirements": {
+			"id": "[0-9]"
+		}
+	},
+
+	"slogan": {
+		"path": "{type}/user/{name}/{slogan}",
+        "defaults": {
+          "name": "ad",
+          "slogan": "bier"
+        }
+	},
+
+	"onevar": {
+		"path": "/{dog}",
+		"defaults": {
+			"dog": "golden",
+			"_controller": "test"
+		}
+	},
+
+	"house": {
+		"path": "/house/car{type}/user/{owner}",
+		"defaults": {
+			"owner": "ad"
+		}
+	},
+
+	"api": {
+		"path": "/api/car{type}/user/{username}/owns/{car}",
+		"defaults": {
+			"username": "advanderveer",
+			"car": "bmw"
+		}
+	}
+}

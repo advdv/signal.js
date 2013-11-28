@@ -1,6 +1,8 @@
 signal.js
 =========
 
+[![Build Status](https://travis-ci.org/advanderveer/signal.js.png?branch=master)](https://travis-ci.org/advanderveer/signal.js)
+
 An isomorphic routing based on the [Symfony2 Routing component](https://github.com/symfony/Routing) but more minimal, allows for both the matching as well as the generation of urls. 
 
 Goals

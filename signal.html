@@ -1,0 +1,236 @@
+<!DOCTYPE html><html lang="en"><head><title>signal</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="signal"><meta name="groc-project-path" content="src/signal.js"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="meta"><div class="file-path">src/signal.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">Signal</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">Signal</span><span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+  <span class="kd">var</span> <span class="nx">SEPARATORS</span> <span class="o">=</span> <span class="s1">&#39;/,;.:-_~+*=@|&#39;</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'> </span></p>
+
+<p>The route collection we use for matching and generation</p></div></div><div class="code"><div class="wrapper">  <span class="nx">self</span><span class="p">.</span><span class="nx">collection</span> <span class="o">=</span> <span class="nx">collection</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'>Method match()</span></p>
+
+<p>Match an url to an route</p>
+
+<p>Parameters:</p>
+
+<ul>
+<li><strong>url must be a string.</strong><br/>(the url to match)</li>
+</ul>
+
+<p><strong>Returns an Object</strong><br/>(the route attributes)</p></div></div><div class="code"><div class="wrapper">  <span class="nx">self</span><span class="p">.</span><span class="nx">match</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">routes</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">all</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">matched</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">attributes</span> <span class="o">=</span> <span class="p">{};</span>
+
+    <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">routes</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+      <span class="kd">var</span> <span class="nx">route</span> <span class="o">=</span> <span class="nx">routes</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+      <span class="kd">var</span> <span class="nx">compiled</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="nx">route</span><span class="p">);</span>
+
+      <span class="c1">//first try a less expensive method for testing</span>
+      <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;&#39;</span> <span class="o">!==</span> <span class="nx">compiled</span><span class="p">.</span><span class="nx">staticPrefix</span> <span class="o">&amp;&amp;</span> <span class="nx">url</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">compiled</span><span class="p">.</span><span class="nx">staticPrefix</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="kd">var</span> <span class="nx">match</span> <span class="o">=</span> <span class="nx">url</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">compiled</span><span class="p">.</span><span class="nx">regexp</span><span class="p">);</span>
+      <span class="k">if</span><span class="p">(</span><span class="nx">match</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+      
+      <span class="c1">//get values from url</span>
+      <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">compiled</span><span class="p">.</span><span class="nx">variables</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+        <span class="kd">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="nx">compiled</span><span class="p">.</span><span class="nx">variables</span><span class="p">[</span><span class="nx">name</span><span class="p">]];</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">attributes</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+        <span class="p">}</span>        
+      <span class="p">});</span>
+
+      <span class="c1">//add defaults</span>
+      <span class="k">if</span><span class="p">(</span><span class="nx">route</span><span class="p">.</span><span class="nx">defaults</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">route</span><span class="p">.</span><span class="nx">defaults</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">def</span><span class="p">){</span>
+          <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">def</span> <span class="k">in</span> <span class="nx">attributes</span><span class="p">))</span>
+            <span class="nx">attributes</span><span class="p">[</span><span class="nx">def</span><span class="p">]</span> <span class="o">=</span> <span class="nx">route</span><span class="p">.</span><span class="nx">defaults</span><span class="p">[</span><span class="nx">def</span><span class="p">];</span>
+        <span class="p">});</span>        
+      <span class="p">}</span>
+
+      <span class="nx">matched</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="nx">matched</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;No route was found that matches the url &quot;&#39;</span><span class="o">+</span><span class="nx">url</span><span class="o">+</span><span class="s1">&#39;&quot;&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">attributes</span><span class="p">;</span>
+  <span class="p">};</span></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'>Method generate()</span></p>
+
+<p>Generate an url based on the name of the route</p>
+
+<p>Parameters:</p>
+
+<ul>
+<li><p><strong>name must be a string.</strong><br/>(The route name)</p></li>
+<li><p><strong>parameters must be an object.</strong><br/>(route parameters)</p></li>
+</ul>
+
+<p><strong>Returns a string</strong><br/>(the url)</p></div></div><div class="code"><div class="wrapper">  <span class="nx">self</span><span class="p">.</span><span class="nx">generate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">parameters</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Route with name &quot;&#39;</span><span class="o">+</span><span class="nx">name</span><span class="o">+</span><span class="s1">&#39;&quot; does not exist.&#39;</span><span class="p">);</span>
+
+    <span class="kd">var</span> <span class="nx">route</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">route</span><span class="p">.</span><span class="nx">defaults</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">route</span><span class="p">.</span><span class="nx">defaults</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">def</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">def</span> <span class="k">in</span> <span class="nx">parameters</span><span class="p">))</span>
+          <span class="nx">parameters</span><span class="p">[</span><span class="nx">def</span><span class="p">]</span> <span class="o">=</span> <span class="nx">route</span><span class="p">.</span><span class="nx">defaults</span><span class="p">[</span><span class="nx">def</span><span class="p">];</span>
+      <span class="p">});</span>        
+    <span class="p">}</span>
+
+    <span class="kd">var</span> <span class="nx">compiled</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="nx">route</span><span class="p">);</span>
+    <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">compiled</span><span class="p">.</span><span class="nx">variables</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">){</span>
+      <span class="k">if</span><span class="p">(</span><span class="nx">parameters</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Some mandatory parameters are missing (&quot;&#39;</span><span class="o">+</span><span class="nx">key</span><span class="o">+</span><span class="s1">&#39;&quot;) to generate a URL for route &quot;&#39;</span><span class="o">+</span><span class="nx">name</span><span class="o">+</span><span class="s1">&#39;&quot;&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">optional</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">defaults</span> <span class="o">=</span> <span class="p">(</span><span class="nx">route</span><span class="p">.</span><span class="nx">defaults</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span> <span class="o">?</span> <span class="p">({})</span> <span class="o">:</span> <span class="p">(</span><span class="nx">route</span><span class="p">.</span><span class="nx">defaults</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">compiled</span><span class="p">.</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">reverse</span><span class="p">();</span>
+    <span class="nx">tokens</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">token</span><span class="p">){</span>
+      <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;variable&#39;</span> <span class="o">===</span> <span class="nx">token</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">optional</span> <span class="o">||</span> <span class="o">!</span><span class="p">(</span><span class="nx">token</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">in</span> <span class="nx">defaults</span><span class="p">)</span> <span class="o">||</span> <span class="kc">undefined</span> <span class="o">!==</span> <span class="nx">parameters</span><span class="p">[</span><span class="nx">token</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">&amp;&amp;</span> <span class="nx">parameters</span><span class="p">[</span><span class="nx">token</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">!==</span> <span class="nx">defaults</span><span class="p">[</span><span class="nx">token</span><span class="p">[</span><span class="mi">3</span><span class="p">]])</span> <span class="p">{</span>
+
+          <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s1">&#39;^&#39;</span><span class="o">+</span><span class="nx">token</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;$&#39;</span><span class="p">).</span><span class="nx">test</span><span class="p">(</span><span class="nx">parameters</span><span class="p">[</span><span class="nx">token</span><span class="p">[</span><span class="mi">3</span><span class="p">]]))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Parameter &quot;&#39;</span><span class="o">+</span><span class="nx">token</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;&quot; for route &quot;&#39;</span><span class="o">+</span><span class="nx">name</span><span class="o">+</span><span class="s1">&#39;&quot; must match &quot;&#39;</span><span class="o">+</span><span class="nx">token</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;&quot; (&quot;&#39;</span><span class="o">+</span><span class="nx">parameters</span><span class="p">[</span><span class="nx">token</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span><span class="o">+</span><span class="s1">&#39;&quot; given) to generate a corresponding URL.&#39;</span><span class="p">);</span>
+          <span class="p">}</span>
+
+          <span class="nx">url</span> <span class="o">=</span> <span class="nx">token</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">parameters</span><span class="p">[</span><span class="nx">token</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">+</span> <span class="nx">url</span><span class="p">;</span>
+          <span class="nx">optional</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+        <span class="p">}</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>static text</p></div></div><div class="code"><div class="wrapper">        <span class="nx">url</span> <span class="o">=</span> <span class="nx">token</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">url</span><span class="p">;</span>
+        <span class="nx">optional</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+      <span class="p">}</span>
+
+    <span class="p">});</span>
+
+
+    <span class="k">return</span> <span class="nx">url</span><span class="p">;</span>
+  <span class="p">};</span></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'>Method compile()</span></p>
+
+<p>Compiles an route into regexp
+NOTE: this is ported directly from Symfony2 routing framework's compile</p>
+
+<p>TODO: Test all branches</p>
+
+<p>Parameters:</p>
+
+<ul>
+<li><strong>route must be an object.</strong><br/>(the route)</li>
+</ul>
+
+<p><strong>Returns an object</strong><br/>(compiled route)</p></div></div><div class="code"><div class="wrapper">  <span class="nx">self</span><span class="p">.</span><span class="nx">compile</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">route</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kd">var</span> <span class="nx">tokens</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="kd">var</span> <span class="nx">variables</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="kd">var</span> <span class="nx">pattern</span> <span class="o">=</span> <span class="nx">route</span><span class="p">.</span><span class="nx">path</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">defaultSeparator</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">pos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="c1">//@todo: refactor</span>
+    <span class="kd">var</span> <span class="nx">quoteRegexp</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">str</span><span class="o">+</span><span class="s1">&#39;&#39;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/([.?*+^$[\]\\(){}|-])/g</span><span class="p">,</span> <span class="s2">&quot;\\$1&quot;</span><span class="p">);</span>
+    <span class="p">};</span>
+
+    <span class="c1">//@todo: refactor out of compile</span>
+    <span class="kd">var</span> <span class="nx">hasDefault</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span><span class="p">(</span><span class="nx">route</span><span class="p">.</span><span class="nx">defaults</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+
+      <span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">route</span><span class="p">.</span><span class="nx">defaults</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+      <span class="k">if</span><span class="p">(</span><span class="nx">res</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+
+      <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="kd">var</span> <span class="nx">matches</span> <span class="o">=</span> <span class="nx">pattern</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/\{\w+\}/g</span><span class="p">);</span>
+    <span class="nx">matches</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">match</span><span class="p">,</span> <span class="nx">i</span><span class="p">){</span>
+      <span class="kd">var</span> <span class="nx">varName</span> <span class="o">=</span> <span class="nx">match</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">match</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+
+      <span class="kd">var</span> <span class="nx">precedingText</span> <span class="o">=</span> <span class="nx">pattern</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">pos</span><span class="p">,</span> <span class="nx">pattern</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">match</span><span class="p">));</span>
+      <span class="nx">pos</span> <span class="o">=</span> <span class="nx">pattern</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">match</span><span class="p">)</span> <span class="o">+</span> <span class="nx">match</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+      <span class="kd">var</span> <span class="nx">precedingChar</span> <span class="o">=</span> <span class="p">(</span><span class="nx">precedingText</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nx">precedingText</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">precedingText</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">precedingText</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">isSeparator</span> <span class="o">=</span> <span class="p">(</span><span class="nx">SEPARATORS</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">precedingChar</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+
+      <span class="k">if</span><span class="p">(</span><span class="nx">isSeparator</span> <span class="o">&amp;&amp;</span> <span class="nx">precedingText</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">tokens</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="nx">precedingText</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">precedingText</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)]);</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">isSeparator</span> <span class="o">&amp;&amp;</span> <span class="nx">precedingText</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">tokens</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="nx">precedingText</span><span class="p">]);</span>
+      <span class="p">}</span>
+
+      <span class="kd">var</span> <span class="nx">regexp</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;requirements&quot;</span> <span class="k">in</span> <span class="nx">route</span><span class="p">)</span> <span class="o">?</span> <span class="p">(</span><span class="nx">route</span><span class="p">.</span><span class="nx">requirements</span><span class="p">[</span><span class="nx">varName</span><span class="p">])</span> <span class="o">:</span> <span class="kc">undefined</span><span class="p">;</span>
+      <span class="k">if</span><span class="p">(</span><span class="nx">regexp</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">followingPattern</span> <span class="o">=</span> <span class="nx">pattern</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">pos</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">nextSeparator</span> <span class="o">=</span> <span class="nx">followingPattern</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\{\w+\}/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span> 
+        <span class="nx">nextSeparator</span> <span class="o">=</span> <span class="p">(</span><span class="nx">SEPARATORS</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">nextSeparator</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="p">(</span><span class="nx">nextSeparator</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="nx">nextSeparator</span> <span class="o">=</span> <span class="p">(</span><span class="nx">defaultSeparator</span> <span class="o">!==</span> <span class="nx">nextSeparator</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;&#39;</span> <span class="o">!==</span> <span class="nx">nextSeparator</span><span class="p">)</span> <span class="o">?</span> <span class="p">(</span><span class="nx">quoteRegexp</span><span class="p">(</span><span class="nx">nextSeparator</span><span class="p">))</span> <span class="o">:</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+        <span class="nx">regexp</span> <span class="o">=</span> <span class="s1">&#39;[^&#39;</span><span class="o">+</span><span class="nx">quoteRegexp</span><span class="p">(</span><span class="nx">defaultSeparator</span><span class="p">)</span><span class="o">+</span><span class="nx">nextSeparator</span><span class="o">+</span><span class="s1">&#39;]+&#39;</span><span class="p">;</span>
+
+      <span class="p">}</span>
+
+      <span class="nx">tokens</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="s1">&#39;variable&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">isSeparator</span><span class="p">)</span> <span class="o">?</span> <span class="p">(</span><span class="nx">precedingChar</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">),</span> <span class="nx">regexp</span><span class="p">,</span> <span class="nx">varName</span><span class="p">]);</span>
+      <span class="nx">variables</span><span class="p">[</span><span class="nx">varName</span><span class="p">]</span> <span class="o">=</span> <span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="p">});</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="nx">pos</span> <span class="o">&lt;</span> <span class="nx">pattern</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">tokens</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="nx">pattern</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">pos</span><span class="p">)]);</span>
+    <span class="p">}</span>
+
+    <span class="kd">var</span> <span class="nx">firstOptionalPos</span> <span class="o">=</span> <span class="mi">9007199254740992</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nx">i</span><span class="o">&lt;</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="nx">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span> 
+      <span class="k">if</span><span class="p">(</span><span class="nx">tokens</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;variable&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">hasDefault</span><span class="p">(</span><span class="nx">tokens</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="mi">3</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="nx">firstOptionalPos</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>
+        <span class="k">break</span><span class="p">;</span>
+
+      <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="kd">var</span> <span class="nx">openOptional</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">computeRegexp</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tokens</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">firstOptional</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+
+      <span class="k">if</span><span class="p">(</span><span class="nx">token</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;text&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">quoteRegexp</span><span class="p">(</span><span class="nx">token</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">//token === variable</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">index</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">firstOptional</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span>  <span class="nx">quoteRegexp</span><span class="p">(</span><span class="nx">token</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="s1">&#39;(&#39;</span><span class="o">+</span><span class="nx">token</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;)?&#39;</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">regexp</span> <span class="o">=</span> <span class="nx">quoteRegexp</span><span class="p">(</span><span class="nx">token</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="s1">&#39;(&#39;</span><span class="o">+</span><span class="nx">token</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;)&#39;</span><span class="p">;</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">&gt;=</span> <span class="nx">firstOptional</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>open optional part
+adding an extra optional shifts the match position</p></div></div><div class="code"><div class="wrapper">            <span class="nx">regexp</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nx">regexp</span><span class="p">;</span> 
+            <span class="nx">variables</span><span class="p">[</span><span class="nx">token</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">variables</span><span class="p">[</span><span class="nx">token</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> 
+            <span class="nx">openOptional</span><span class="o">++</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">nbTokens</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">index</span> <span class="o">===</span> <span class="nx">nbTokens</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">regexp</span> <span class="o">=</span> <span class="nx">regexp</span> <span class="o">+</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">openOptional</span><span class="o">+</span><span class="mi">1</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;)?&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+          <span class="p">}</span>
+          <span class="k">return</span> <span class="nx">regexp</span><span class="p">;</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+
+    <span class="p">};</span>
+
+    <span class="kd">var</span> <span class="nx">regexp</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="nx">tokens</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">i</span><span class="p">){</span>
+      <span class="nx">regexp</span> <span class="o">=</span> <span class="nx">regexp</span> <span class="o">+</span> <span class="nx">computeRegexp</span><span class="p">(</span><span class="nx">tokens</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">firstOptionalPos</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="nx">staticPrefix</span><span class="o">:</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;text&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span> <span class="o">:</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">),</span>
+      <span class="nx">regexp</span><span class="o">:</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s1">&#39;^&#39;</span><span class="o">+</span><span class="nx">regexp</span><span class="o">+</span><span class="s1">&#39;$&#39;</span><span class="p">),</span>
+      <span class="nx">tokens</span><span class="o">:</span> <span class="nx">tokens</span><span class="p">,</span>
+      <span class="nx">variables</span><span class="o">:</span> <span class="nx">variables</span>
+    <span class="p">};</span>
+  <span class="p">};</span>
+
+<span class="p">};</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">Signal</span><span class="p">;</span></div></div></div></div></body></html>

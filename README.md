@@ -13,3 +13,23 @@ Goals
 +   Only focus on associating certain attributes with certain routes, make no assumptions on how you use the router.
 +   Urls can be generated based on the the routes name, this allows for more decoupling
 +   Allow for easy configuration using JSON but also expose an clear api
+
+
+Installation
+--------
+In node you can install this using npm: 
+
+`npm install signal.js`
+
+Then you can simply require it in your application:
+ 
+ ```javascript
+ var Signal = require('signal.js');
+ ```
+
+Further Documentation
+--------------
+We currently have the following documentation:
+
++ [API - Generated using Groc](http://advanderveer.github.io/signal.js/)
++ [Code Coverage (~100%)](http://advanderveer.github.io/signal.js/coverage/lcov-report/)

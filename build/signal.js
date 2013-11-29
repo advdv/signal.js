@@ -126,7 +126,6 @@ var Signal = function Signal(collection) {
    * @method compile()
    * @param  {object} route the route
    * @return {object} compiled route
-   * @todo Test all branches
    */
   self.compile = function(route) {
 

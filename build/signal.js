@@ -27,6 +27,9 @@ var Signal = function Signal(collection) {
     var attributes = {};
 
     Object.keys(routes).forEach(function(name){
+      if(matched === true)
+        return;
+
       var route = routes[name];
       var compiled = self.compile(route);
 
@@ -38,7 +41,7 @@ var Signal = function Signal(collection) {
       var match = url.match(compiled.regexp);
       if(match === null)
         return;
-      
+
       //get values from url
       Object.keys(compiled.variables).forEach(function(name){
         var val = match[compiled.variables[name]];
@@ -55,6 +58,7 @@ var Signal = function Signal(collection) {
         });        
       }
 
+      attributes._route = name;
       matched = true;
     });
 
@@ -153,36 +157,38 @@ var Signal = function Signal(collection) {
     };
 
     var matches = pattern.match(/\{\w+\}/g);
-    matches.forEach(function(match, i){
-      var varName = match.substring(1, match.length-1);
+    if(matches !== null) {
+      matches.forEach(function(match, i){
+        var varName = match.substring(1, match.length-1);
 
-      var precedingText = pattern.substring(pos, pattern.indexOf(match));
-      pos = pattern.indexOf(match) + match.length;
+        var precedingText = pattern.substring(pos, pattern.indexOf(match));
+        pos = pattern.indexOf(match) + match.length;
 
-      var precedingChar = (precedingText.length > 0) ? precedingText.substring(precedingText.length-1, precedingText.length) : '';
-      var isSeparator = (SEPARATORS.indexOf(precedingChar) > -1) ? (true) : (false);
+        var precedingChar = (precedingText.length > 0) ? precedingText.substring(precedingText.length-1, precedingText.length) : '';
+        var isSeparator = (SEPARATORS.indexOf(precedingChar) > -1) ? (true) : (false);
 
-      if(isSeparator && precedingText.length > 1) {
-        tokens.push(['text', precedingText.substring(0, precedingText.length-1)]);
-      } else if(!isSeparator && precedingText.length > 0) {
-        tokens.push(['text', precedingText]);
-      }
+        if(isSeparator && precedingText.length > 1) {
+          tokens.push(['text', precedingText.substring(0, precedingText.length-1)]);
+        } else if(!isSeparator && precedingText.length > 0) {
+          tokens.push(['text', precedingText]);
+        }
 
-      var regexp = ("requirements" in route) ? (route.requirements[varName]) : undefined;
-      if(regexp === undefined) {
-        var followingPattern = pattern.substring(pos);
-        var nextSeparator = followingPattern.replace(/\{\w+\}/g, ''); 
-        nextSeparator = (SEPARATORS.indexOf(nextSeparator[0]) > -1) ? (nextSeparator[0]) : '';
-        nextSeparator = (defaultSeparator !== nextSeparator && '' !== nextSeparator) ? (quoteRegexp(nextSeparator)) : ('');
+        var regexp = ("requirements" in route) ? (route.requirements[varName]) : undefined;
+        if(regexp === undefined) {
+          var followingPattern = pattern.substring(pos);
+          var nextSeparator = followingPattern.replace(/\{\w+\}/g, ''); 
+          nextSeparator = (SEPARATORS.indexOf(nextSeparator[0]) > -1) ? (nextSeparator[0]) : '';
+          nextSeparator = (defaultSeparator !== nextSeparator && '' !== nextSeparator) ? (quoteRegexp(nextSeparator)) : ('');
 
-        regexp = '[^'+quoteRegexp(defaultSeparator)+nextSeparator+']+';
+          regexp = '[^'+quoteRegexp(defaultSeparator)+nextSeparator+']+';
 
-      }
+        }
 
-      tokens.push(['variable', (isSeparator) ? (precedingChar) : (''), regexp, varName]);
-      variables[varName] = i+1;
+        tokens.push(['variable', (isSeparator) ? (precedingChar) : (''), regexp, varName]);
+        variables[varName] = i+1;
 
-    });
+      });
+    }
 
     if(pos < pattern.length) {
       tokens.push(['text', pattern.substring(pos)]);

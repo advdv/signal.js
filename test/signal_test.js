@@ -19,6 +19,13 @@ describe('Signal', function(){
 
   describe('Compiling routes', function(){
 
+    it("compile without vars", function(){
+
+      var compiled = s.compile({path:'/'});
+      compiled.staticPrefix.should.equal('/');
+
+    });
+
     it("basic", function(){
 
       var compiled1 = s.compile({path:'/api/{type}/id-{id}.{_format}test'});
@@ -132,12 +139,20 @@ describe('Signal', function(){
 
   describe('Match/Generate routes', function(){
 
-    var r;
+    var r, r2;
     beforeEach(function(){
       r = new Signal(new Collection(matchRoutes));
+      r2 = new Signal(new Collection({
+        index: {
+          path: "/"
+        }
+      }));
     });
 
     it("#match(), check parameters", function(){
+
+      var res0 = r2.match('/');
+      res0._route.should.equal('index');
 
       var res = r.match('/basic/car/id-1.xmltest');
       res.type.should.equal('car');

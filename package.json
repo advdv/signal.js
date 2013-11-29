@@ -1,6 +1,6 @@
 {
   "name": "signal.js",
-  "version": "0.1.1",
+  "version": "0.1.4",
   "description": "An isomorphic routing based on the Symfony2 router component, allows for both the matching as well as the generation of urls",
   "main": "index.js",
   "scripts": {

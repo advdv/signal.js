@@ -1,4 +1,5 @@
 {
+
 	"basic": {
 		"path": "/basic/{type}/id-{id}.{_format}test",
 		"requirements": {

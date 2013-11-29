@@ -3,6 +3,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-gh-pages');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-karma');
@@ -43,9 +44,9 @@ module.exports = function(grunt) {
           'node_modules/groc/bin/groc "./src/**/*.js" --out=docs "./README.md"',
         ].join(' && ')
       },
-      // deploy: {
-      //   command: 'npm publish'
-      // }
+      deploy: {
+        command: 'npm publish'
+      }
     },
 
     /* retest on change */
@@ -62,12 +63,12 @@ module.exports = function(grunt) {
 
 
     //publish docs to pages
-    // 'gh-pages': {
-    //   options: {
-    //     base: 'docs'
-    //   },
-    //   src: ['**']
-    // },
+    'gh-pages': {
+      options: {
+        base: 'docs'
+      },
+      src: ['**']
+    },
 
     /* include commonjs */
     browserify: {
@@ -114,6 +115,6 @@ module.exports = function(grunt) {
   grunt.registerTask('start', ['karma:unit','watch']);
   grunt.registerTask('test', ['jshint', 'mochaTest', 'shell:coverage', 'shell:documentation']);
   grunt.registerTask('build', ['jshint', 'browserify', 'uglify', 'shell:coverage', 'shell:documentation']);
-  grunt.registerTask('deploy', ['test', 'build', /*'gh-pages', 'shell:deploy'*/]);
+  grunt.registerTask('deploy', ['test', 'build', 'gh-pages', 'shell:deploy']);
 
 };

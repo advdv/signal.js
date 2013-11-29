@@ -3,6 +3,7 @@ signal.js
 
 [![Build Status](https://travis-ci.org/advanderveer/signal.js.png?branch=master)](https://travis-ci.org/advanderveer/signal.js)
 [![Dependency Status](https://david-dm.org/advanderveer/signal.js.png)](https://david-dm.org/advanderveer/signal.js)
+[![NPM version](https://badge.fury.io/js/signal.js.png)](http://badge.fury.io/js/signal.js)
 
 An isomorphic routing based on the [Symfony2 Routing component](https://github.com/symfony/Routing) but more minimal, allows for both the matching as well as the generation of urls. 
 

@@ -71,6 +71,7 @@ var Signal = function Signal(collection) {
    * @return {string}            the url
    */
   self.generate = function(name, parameters) {
+    parameters = (parameters !== undefined) ? parameters : {};
 
     if(self.collection.has(name) === false)
       throw new Error('Route with name "'+name+'" does not exist.');

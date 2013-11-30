@@ -205,6 +205,9 @@ describe('Signal', function(){
         r.generate('basic', {type: 'coupe', id: 'aa', _format: 'xml'});   //doesnot fit requirements
       }).should.throw();
 
+      var url0 = r2.generate('index');
+      url0.should.equal('/');
+
       var url1 = r.generate('house', {type: 'coupe'}); 
       url1.should.equal('/house/carcoupe/user');
       var params = r.match(url1);

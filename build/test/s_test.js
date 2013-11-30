@@ -212,6 +212,7 @@ var Signal = function Signal(collection) {
    * @return {string}            the url
    */
   self.generate = function(name, parameters) {
+    parameters = (parameters !== undefined) ? parameters : {};
 
     if(self.collection.has(name) === false)
       throw new Error('Route with name "'+name+'" does not exist.');
@@ -646,6 +647,9 @@ describe('Signal', function(){
       (function(){
         r.generate('basic', {type: 'coupe', id: 'aa', _format: 'xml'});   //doesnot fit requirements
       }).should.throw();
+
+      var url0 = r2.generate('index');
+      url0.should.equal('/');
 
       var url1 = r.generate('house', {type: 'coupe'}); 
       url1.should.equal('/house/carcoupe/user');

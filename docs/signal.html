@@ -69,6 +69,7 @@
 </ul>
 
 <p><strong>Returns a string</strong><br/>(the url)</p></div></div><div class="code"><div class="wrapper">  <span class="nx">self</span><span class="p">.</span><span class="nx">generate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">parameters</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">parameters</span> <span class="o">=</span> <span class="p">(</span><span class="nx">parameters</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="o">?</span> <span class="nx">parameters</span> <span class="o">:</span> <span class="p">{};</span>
 
     <span class="k">if</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span>
       <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Route with name &quot;&#39;</span><span class="o">+</span><span class="nx">name</span><span class="o">+</span><span class="s1">&#39;&quot; does not exist.&#39;</span><span class="p">);</span>
